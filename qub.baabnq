@@ -7,12 +7,15 @@
 use 'libs/stack.baabnq';
 use 'libs/string.baabnq';
 use 'libs/float.baabnq';
+use 'libs/chunk.baabnq';
 
+" a quantum system is defined as a Chunk of Floats
+" Qsys = Chunk<Float>
 
 
 jump Qub::Skip;
 
-" (BitCount::Int) => (QSystem::Chunk<Float>[BitCount])
+" (BitCount::Int) => (::Qsys)
 " creates a quantum system initialized to |0^k> 
 lab Qub::CreateSystem;
     sub Stack::Swap;
@@ -38,5 +41,83 @@ lab Qub::CreateSystem;
     return;
 
 
+" (::Qsys, Bit::Int)"
+lab Qub::Had;
+    sub Stack::Swap;
+    pull _bit;
+    sub Stack::Swap;
+    pull _sys;
+
+
+    put _mask = 1 << _bit;
+    put _i = 0;
+
+    push _sys; sub Chunk::Len; pull _bitCount;
+    lab Qub::Had::Loop;
+        jump Qub::Had::Again ~ _i & _mask != 0;
+        put _j = _i | _mask;
+        
+        put _ket0 <- _sys + _i; " in _i the bit is unset
+        put _ket1 <- _sys + _j; " in _j the bit is set due to _j = _i | _mask
+
+        push _ket0; push _ket1;                  sub Floats::Add; pull _ket0had;
+        push _ket0; push _ket1; sub Floats::Neg; sub Floats::Add; pull _ket1had;
+
+        put _ket0had -> _sys + _i; " in _i the bit is unset
+        put _ket1had -> _sys + _j; " in _j the bit is set due to _j = _i | _mask
+
+        lab Qub::Had::Again;
+        put _i = _i + 1;
+    jump Qub::Had::Loop ~ _i < _bitCount;
+
+    push _sys;
+    sub Qub::Normalize;
+
+    return;
+    
+
+" (::Qsys)
+" make quantum system unitary
+lab Qub::Normalize;
+    sub Stack::Swap;
+    pull _sys;
+    push _sys; sub Chunk::Len; pull _bitCount;
+
+    "compute vector component sum
+    put _i = 0;
+    put _sum = _Floats::Zero;
+    lab Qub::Normalize::SumLoop;
+        put _bit <- _sys + _i;
+
+        push _bit; push _bit; sub Floats::Mul; pull _square;
+        push _square; push _sum; sub Floats::Add; pull _sum;
+
+        put _i = _i + 1;
+    jump Qub::Normalize::SumLoop ~ _i < _bitCount;
+
+    "compute norm
+    push _sum; sub Floats::Sqrt; pull _norm;
+
+    "scale vector by norm
+    put _i = 0;
+    lab Qub::Normalize::DivLoop;
+        put _bit <- _sys + _i;
+
+        push _bit; push _norm; sub Floats::Div; pull _bit;
+
+        "correct exploded amplitude
+        push _Floats::Zero;
+        push _bit;
+            push _bit; sub Floats::GetExponent; pull __;
+            sub Stack::Swap ~ __ == 127;
+        pull _bit;
+        sub Stack::Drop;
+
+        put _bit -> _sys + _i;
+
+        put _i = _i + 1;
+    jump Qub::Normalize::DivLoop ~ _i < _bitCount;
+
+    return;
 
 lab Qub::Skip;

@@ -6,7 +6,17 @@ use 'libs/chunk.baabnq';
 
 push 20;
 sub Qub::CreateSystem;
+pull _sys;
+
+
+push _sys;
+push 0;
+sub Qub::Had;
+
+push _sys;
 sub Chunk::Print;
+
+
 
 
 
