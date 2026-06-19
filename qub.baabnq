@@ -1,0 +1,42 @@
+
+" qub (pronounced /kjub/ like cube) is a real-valued 
+" quantum simulation frame work written in baabnq.
+
+
+
+use 'libs/stack.baabnq';
+use 'libs/string.baabnq';
+use 'libs/float.baabnq';
+
+
+
+jump Qub::Skip;
+
+" (BitCount::Int) => (QSystem::Chunk<Float>[BitCount])
+" creates a quantum system initialized to |0^k> 
+lab Qub::CreateSystem;
+    sub Stack::Swap;
+    pull _bitCount;
+
+    " allocate state vector
+    new _bitCount _sys;
+
+    " zero out state vector
+    push _sys;
+    push _Floats::Zero;
+    push _bitCount;
+    sub String::MemSet;
+
+    " put system into |0^k>
+    push 1;
+    sub Floats::Value2Fp;
+    pull __;
+    put __ -> _sys;
+
+    push _sys;
+    sub Stack::Swap;
+    return;
+
+
+
+lab Qub::Skip;

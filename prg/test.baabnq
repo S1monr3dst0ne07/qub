@@ -1,0 +1,13 @@
+
+use 'qub.baabnq';
+use 'libs/chunk.baabnq';
+
+
+
+push 20;
+sub Qub::CreateSystem;
+sub Chunk::Print;
+
+
+
+

@@ -1,0 +1,6 @@
+# baabnq libraries
+libs/
+ext/
+
+# baabnq build
+build
