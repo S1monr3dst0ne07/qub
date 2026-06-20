@@ -230,17 +230,17 @@ lab Qub::Normalize;
     lab Qub::Normalize::DivLoop;
         put _bit <- _sys + _i;
 
-        push _bit; push _norm; sub Floats::Div; pull _bit;
+        push _bit; push _norm; sub Floats::Div; pull _bitnorm;
 
         "correct exploded amplitude
         push _Floats::Zero;
-        push _bit;
+        push _bitnorm;
             push _bit; sub Floats::GetExponent; pull __;
-            sub Stack::Swap ~ __ == 127;
-        pull _bit;
+            sub Stack::Swap ~ (255 - __) > 120; "close to zero
+        pull _bitnorm;
         sub Stack::Drop;
 
-        put _bit -> _sys + _i;
+        put _bitnorm -> _sys + _i;
 
         put _i = _i + 1;
     jump Qub::Normalize::DivLoop ~ _i < _dimCount;
