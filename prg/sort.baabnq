@@ -1,0 +1,121 @@
+
+" wowie, an original program (written by me)
+" aside from the obvious grover being used.
+" but the Usort is all mine ;3c
+
+use 'qub.baabnq';
+
+
+"   3 input bits
+"   (3-1) = 2 ancilla bits
+"   1 output bit
+" ---------------------------
+"   6 total bits in the system
+        put _bit::inp0 = 0;
+        put _bit::inp1 = 1;
+        put _bit::inp2 = 2;
+        put _bit::anc0 = 3;
+        put _bit::anc1 = 4;
+        put _bit::out  = 5;
+
+" 2 ^ 3 = 8 input states
+" floor(sqrt(8) * pi / 4) = 2 grover iterations
+
+push 6;
+sub Qub::CreateSystem;
+pull _sys;
+
+" prepare output to |-> to phase kickback through Usort
+push _sys; push _bit::out; sub Qub::Not;
+push _sys; push _bit::out; sub Qub::Had;
+
+sub Usort;
+sub Udiff;
+sub Usort;
+sub Udiff;
+
+push _sys; push _bit::out; sub Qub::Had;
+push _sys; push _bit::out; sub Qub::Not;
+
+push _sys;
+sub Chunk::Print;
+asm 'brk;';
+
+
+lab Usort;
+
+    " compute sortednesses
+    push _sys; push _bit::inp0; sub Qub::Not;
+    push _sys;
+        push _bit::inp0;
+        push _bit::inp1;
+        push _bit::anc0;
+    sub Qub::Toff;
+    push _sys; push _bit::inp0; sub Qub::Not;
+    push _sys; push _bit::inp1; sub Qub::Not;
+    push _sys;
+        push _bit::inp1;
+        push _bit::inp2;
+        push _bit::anc1;
+    sub Qub::Toff;
+    push _sys; push _bit::inp1; sub Qub::Not;
+
+
+    " merge sortednesses
+    push _sys; push _bit::anc0; sub Qub::Not;
+    push _sys; push _bit::anc1; sub Qub::Not;
+    push _sys;
+        push _bit::anc0;
+        push _bit::anc1;
+        push _bit::out;
+    sub Qub::Toff;
+    push _sys; push _bit::anc0; sub Qub::Not;
+    push _sys; push _bit::anc1; sub Qub::Not;
+    
+    " uncompute sortednesses 
+    push _sys; push _bit::inp0; sub Qub::Not;
+    push _sys;
+        push _bit::inp0;
+        push _bit::inp1;
+        push _bit::anc0;
+    sub Qub::Toff;
+    push _sys; push _bit::inp0; sub Qub::Not;
+    push _sys; push _bit::inp1; sub Qub::Not;
+    push _sys;
+        push _bit::inp1;
+        push _bit::inp2;
+        push _bit::anc1;
+    sub Qub::Toff;
+    push _sys; push _bit::inp1; sub Qub::Not;
+
+    return;
+
+
+lab Udiff;
+
+    push _sys; push _bit::inp0; sub Qub::Had;
+    push _sys; push _bit::inp1; sub Qub::Had;
+    push _sys; push _bit::inp2; sub Qub::Had;
+    push _sys; push _bit::inp0; sub Qub::Not;
+    push _sys; push _bit::inp1; sub Qub::Not;
+    push _sys; push _bit::inp2; sub Qub::Not;
+
+    push _sys; push _bit::inp0; sub Qub::Had;
+    push _sys;
+        push _bit::inp1;
+        push _bit::inp2;
+        push _bit::inp0;
+    sub Qub::Toff;
+    push _sys; push _bit::inp0; sub Qub::Had;
+
+    push _sys; push _bit::inp0; sub Qub::Not;
+    push _sys; push _bit::inp1; sub Qub::Not;
+    push _sys; push _bit::inp2; sub Qub::Not;
+    push _sys; push _bit::inp0; sub Qub::Had;
+    push _sys; push _bit::inp1; sub Qub::Had;
+    push _sys; push _bit::inp2; sub Qub::Had;
+
+    return;
+
+
+

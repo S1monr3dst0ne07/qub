@@ -1,7 +1,7 @@
 
 
 
-TARGET=prg/bell.baabnq
+TARGET=prg/sort.baabnq
 
 run: build # run and decode
 	v -f build | python3 decode.py
