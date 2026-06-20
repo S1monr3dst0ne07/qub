@@ -78,6 +78,45 @@ lab Qub::Had;
     return;
 
 
+" (::Qsys, Control::Int, Target::Int)
+lab Qub::CNot;
+    sub Stack::Swap;
+    pull _target;
+    sub Stack::Swap;
+    pull _control;
+    sub Stack::Swap;
+    pull _sys;
+
+
+    put _controlMask = 1 << _control;
+    put _targetMask  = 1 << _target;
+
+    put _i = 0;
+
+    push _sys; sub Chunk::Len; pull _dimCount;
+    lab Qub::CNot::Loop;
+        jump Qub::CNot::Again ~ _i & _targetMask != 0;
+        put _j = _i | _targetMask;
+
+        " conditional state flip
+        jump Qub::CNot::Again ~ _i & _controlMask == 0;
+
+        " if state flip applies,
+        " just swap ket0 and ket1
+        put _ket0 <- _sys + _i;
+        put _ket1 <- _sys + _j;
+
+        put _ket1 -> _sys + _i;
+        put _ket0 -> _sys + _j;
+
+        lab Qub::CNot::Again;
+        put _i = _i + 1;
+    jump Qub::CNot::Loop ~ _i < _dimCount;
+
+    " no normalization necessary
+    return;
+
+
     
 
 " (::Qsys)
