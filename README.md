@@ -1,7 +1,7 @@
 # QUB - QUantum Baabnq
 
 Qub (pronounced /kjub/ like "cube") is a real-valued
-quantum simulation framework written in [Baabnq](baabnq.github.io).
+quantum simulation framework written in [Baabnq](https://baabnq.github.io).
 
 
 Demo video: [https://youtu.be/Pj0TjuTnvX8](https://youtu.be/Pj0TjuTnvX8)
