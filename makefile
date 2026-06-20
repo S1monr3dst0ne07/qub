@@ -1,12 +1,15 @@
 
 
 
-TARGET=prg/test.baabnq
+TARGET=prg/bell.baabnq
 
-run: build
+run: build 
 	v -f build
 
-build: $(TARGET)
+rund: build # run and decode
+	v -f build | xargs -I{} futil -d {} -p
+
+build: $(TARGET) qub.baabnq
 	c -i $(TARGET) -o build
 
 
