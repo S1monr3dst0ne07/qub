@@ -22,9 +22,6 @@ push _bit::trgt;
 sub Qub::CNot;
 
 
-"push _sys;
-"sub Qub::Print;
-
 push _sys;
 sub Chunk::Print;
 
