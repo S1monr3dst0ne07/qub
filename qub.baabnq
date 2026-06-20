@@ -119,8 +119,10 @@ lab Qub::CNot;
 
 " (::Qsys, Control1::Int, Control2::Int, Target::Int)
 " this gate cannot be built from the other ones,
-" due to some fuck-ass math. it's a so-called nonlinear
-" reversible operator.
+" they cannot break symmetry between qubits. 
+" a toffoli gate is the only way to construct 
+" the and-gate and or-gate if no other nonlinear 
+" operators are present.
 lab Qub::Toff;
     sub Stack::Swap;
     pull _target;
