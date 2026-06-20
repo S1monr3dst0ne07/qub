@@ -116,6 +116,37 @@ lab Qub::CNot;
     " no normalization necessary
     return;
 
+" (::Qsys, Bit::Int)
+lab Qub::Not;
+    sub Stack::Swap;
+    pull _bit;
+    sub Stack::Swap;
+    pull _sys;
+
+
+    put _mask = 1 << _bit;
+
+    put _i = 0;
+
+    push _sys; sub Chunk::Len; pull _dimCount;
+    lab Qub::Not::Loop;
+        jump Qub::Not::Again ~ _i & _mask != 0;
+        put _j = _i | _mask;
+
+        " just swap ket0 and ket1
+        put _ket0 <- _sys + _i;
+        put _ket1 <- _sys + _j;
+
+        put _ket1 -> _sys + _i;
+        put _ket0 -> _sys + _j;
+
+        lab Qub::Not::Again;
+        put _i = _i + 1;
+    jump Qub::Not::Loop ~ _i < _dimCount;
+
+    " no normalization necessary
+    return;
+
 
     
 
