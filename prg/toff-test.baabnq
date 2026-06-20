@@ -1,0 +1,21 @@
+
+use 'qub.baabnq';
+
+
+push 3;
+sub Qub::CreateSystem;
+pull _sys;
+
+
+push _sys; push 0; sub Qub::Had;
+push _sys; push 1; sub Qub::Had;
+
+push _sys;
+push 0;
+push 1;
+push 2; "target
+sub Qub::Toff;
+
+push _sys;
+sub Chunk::Print;
+

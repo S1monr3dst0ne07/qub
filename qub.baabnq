@@ -116,6 +116,57 @@ lab Qub::CNot;
     " no normalization necessary
     return;
 
+
+" (::Qsys, Control1::Int, Control2::Int, Target::Int)
+" this gate cannot be built from the other ones,
+" due to some fuck-ass math. it's a so-called nonlinear
+" reversible operator.
+lab Qub::Toff;
+    sub Stack::Swap;
+    pull _target;
+    sub Stack::Swap;
+    pull _control2;
+    sub Stack::Swap;
+    pull _control1;
+    sub Stack::Swap;
+    pull _sys;
+
+
+    put _controlMask1 = 1 << _control1;
+    put _controlMask2 = 1 << _control2;
+    put _targetMask   = 1 << _target;
+
+    put _i = 0;
+
+    push _sys; sub Chunk::Len; pull _dimCount;
+    lab Qub::CNot::Loop;
+        jump Qub::CNot::Again ~ _i & _targetMask != 0;
+        put _j = _i | _targetMask;
+
+        " conditional state flip
+        jump Qub::CNot::Again ~ _i & _controlMask1 == 0;
+        jump Qub::CNot::Again ~ _i & _controlMask2 == 0;
+
+        " if state flip applies,
+        " just swap ket0 and ket1
+        put _ket0 <- _sys + _i;
+        put _ket1 <- _sys + _j;
+
+        put _ket1 -> _sys + _i;
+        put _ket0 -> _sys + _j;
+
+        lab Qub::CNot::Again;
+        put _i = _i + 1;
+    jump Qub::CNot::Loop ~ _i < _dimCount;
+
+    " no normalization necessary
+    return;
+
+
+
+
+
+
 " (::Qsys, Bit::Int)
 lab Qub::Not;
     sub Stack::Swap;
