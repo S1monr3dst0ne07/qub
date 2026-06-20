@@ -21,13 +21,15 @@ lab Qub::CreateSystem;
     sub Stack::Swap;
     pull _bitCount;
 
+    put _dimCount = 1 << _bitCount; 
+
     " allocate state vector
-    new _bitCount _sys;
+    new _dimCount _sys;
 
     " zero out state vector
     push _sys;
     push _Floats::Zero;
-    push _bitCount;
+    push _dimCount;
     sub String::MemSet;
 
     " put system into |0^k>
@@ -52,7 +54,7 @@ lab Qub::Had;
     put _mask = 1 << _bit;
     put _i = 0;
 
-    push _sys; sub Chunk::Len; pull _bitCount;
+    push _sys; sub Chunk::Len; pull _dimCount;
     lab Qub::Had::Loop;
         jump Qub::Had::Again ~ _i & _mask != 0;
         put _j = _i | _mask;
@@ -63,17 +65,19 @@ lab Qub::Had;
         push _ket0; push _ket1;                  sub Floats::Add; pull _ket0had;
         push _ket0; push _ket1; sub Floats::Neg; sub Floats::Add; pull _ket1had;
 
-        put _ket0had -> _sys + _i; " in _i the bit is unset
-        put _ket1had -> _sys + _j; " in _j the bit is set due to _j = _i | _mask
+        put _ket0had -> _sys + _i;
+        put _ket1had -> _sys + _j;
 
         lab Qub::Had::Again;
         put _i = _i + 1;
-    jump Qub::Had::Loop ~ _i < _bitCount;
+    jump Qub::Had::Loop ~ _i < _dimCount;
 
     push _sys;
     sub Qub::Normalize;
 
     return;
+
+
     
 
 " (::Qsys)
@@ -81,7 +85,7 @@ lab Qub::Had;
 lab Qub::Normalize;
     sub Stack::Swap;
     pull _sys;
-    push _sys; sub Chunk::Len; pull _bitCount;
+    push _sys; sub Chunk::Len; pull _dimCount;
 
     "compute vector component sum
     put _i = 0;
@@ -93,7 +97,7 @@ lab Qub::Normalize;
         push _square; push _sum; sub Floats::Add; pull _sum;
 
         put _i = _i + 1;
-    jump Qub::Normalize::SumLoop ~ _i < _bitCount;
+    jump Qub::Normalize::SumLoop ~ _i < _dimCount;
 
     "compute norm
     push _sum; sub Floats::Sqrt; pull _norm;
@@ -116,7 +120,7 @@ lab Qub::Normalize;
         put _bit -> _sys + _i;
 
         put _i = _i + 1;
-    jump Qub::Normalize::DivLoop ~ _i < _bitCount;
+    jump Qub::Normalize::DivLoop ~ _i < _dimCount;
 
     return;
 
