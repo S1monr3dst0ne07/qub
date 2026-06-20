@@ -3,7 +3,7 @@ VM=./vm
 BC=c
 
 
-TARGET=prg/mybell.baabnq
+TARGET=prg/sort.baabnq
 
 run: compile # run and decode
 	#v -f build | python3 decode.py

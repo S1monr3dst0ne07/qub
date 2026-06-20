@@ -3,6 +3,9 @@
 Qub (pronounced /kjub/ like "cube") is a real-valued
 quantum simulation framework written in [Baabnq](baabnq.github.io).
 
+
+Demo video: [https://youtu.be/Pj0TjuTnvX8](https://youtu.be/Pj0TjuTnvX8)
+
 # Gate Set
 This simulator implements an simple universal gate set:
 - `Qub::Had` for the Hadamard gate.
