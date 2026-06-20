@@ -29,11 +29,10 @@ pull _sys;
 push _sys; push _bit::out; sub Qub::Not;
 push _sys; push _bit::out; sub Qub::Had;
 
-sub Usort;
-sub Udiff;
-sub Usort;
-sub Udiff;
+sub Ugrover;
+sub Ugrover;
 
+" uncompute |-> on output
 push _sys; push _bit::out; sub Qub::Had;
 push _sys; push _bit::out; sub Qub::Not;
 
@@ -42,63 +41,52 @@ sub Chunk::Print;
 asm 'brk;';
 
 
+
+lab Ugrover;
+    sub Usort;
+    sub Udiff;
+    return;
+
+
 lab Usort;
+    sub Usort::Compute; " compute sortednesses
 
-    " compute sortednesses
-    push _sys; push _bit::inp0; sub Qub::Not;
-    push _sys;
-        push _bit::inp0;
-        push _bit::inp1;
-        push _bit::anc0;
-    sub Qub::Toff;
-    push _sys; push _bit::inp0; sub Qub::Not;
-    push _sys; push _bit::inp1; sub Qub::Not;
-    push _sys;
-        push _bit::inp1;
-        push _bit::inp2;
-        push _bit::anc1;
-    sub Qub::Toff;
-    push _sys; push _bit::inp1; sub Qub::Not;
-
-
-    " merge sortednesses
-    push _sys; push _bit::anc0; sub Qub::Not;
-    push _sys; push _bit::anc1; sub Qub::Not;
-    push _sys;
+    push _sys; " merge sortednesses
         push _bit::anc0;
         push _bit::anc1;
         push _bit::out;
     sub Qub::Toff;
-    push _sys; push _bit::anc0; sub Qub::Not;
-    push _sys; push _bit::anc1; sub Qub::Not;
     
-    " uncompute sortednesses 
-    push _sys; push _bit::inp0; sub Qub::Not;
-    push _sys;
-        push _bit::inp0;
-        push _bit::inp1;
-        push _bit::anc0;
-    sub Qub::Toff;
-    push _sys; push _bit::inp0; sub Qub::Not;
-    push _sys; push _bit::inp1; sub Qub::Not;
-    push _sys;
-        push _bit::inp1;
-        push _bit::inp2;
-        push _bit::anc1;
-    sub Qub::Toff;
-    push _sys; push _bit::inp1; sub Qub::Not;
-
+    sub Usort::Compute; " uncompute sortednesses 
     return;
+
+
+    lab Usort::Compute;
+        push _sys; push _bit::anc0; sub Qub::Not;
+        push _sys; push _bit::anc1; sub Qub::Not;
+
+        push 0; sub Usort::Step;
+        push 1; sub Usort::Step;
+        return;
+
+    lab Usort::Step; " (Index::Int)
+        sub Stack::Swap;
+        pull _x;
+
+        push _sys; push _bit::inp0 + _x; sub Qub::Not;
+        push _sys;
+            push _bit::inp0 + _x;
+            push _bit::inp1 + _x;
+            push _bit::anc0 + _x;
+        sub Qub::Toff;
+        push _sys; push _bit::inp0 + _x; sub Qub::Not;
+
+        return;
 
 
 lab Udiff;
-
-    push _sys; push _bit::inp0; sub Qub::Had;
-    push _sys; push _bit::inp1; sub Qub::Had;
-    push _sys; push _bit::inp2; sub Qub::Had;
-    push _sys; push _bit::inp0; sub Qub::Not;
-    push _sys; push _bit::inp1; sub Qub::Not;
-    push _sys; push _bit::inp2; sub Qub::Not;
+    sub Udiff::Had;
+    sub Udiff::Not;
 
     push _sys; push _bit::inp0; sub Qub::Had;
     push _sys;
@@ -108,14 +96,20 @@ lab Udiff;
     sub Qub::Toff;
     push _sys; push _bit::inp0; sub Qub::Had;
 
-    push _sys; push _bit::inp0; sub Qub::Not;
-    push _sys; push _bit::inp1; sub Qub::Not;
-    push _sys; push _bit::inp2; sub Qub::Not;
-    push _sys; push _bit::inp0; sub Qub::Had;
-    push _sys; push _bit::inp1; sub Qub::Had;
-    push _sys; push _bit::inp2; sub Qub::Had;
-
+    sub Udiff::Not;
+    sub Udiff::Had;
     return;
 
 
+    lab Udiff::Not;
+        push _sys; push _bit::inp0; sub Qub::Not;
+        push _sys; push _bit::inp1; sub Qub::Not;
+        push _sys; push _bit::inp2; sub Qub::Not;
+        return;
+
+    lab Udiff::Had;
+        push _sys; push _bit::inp0; sub Qub::Had;
+        push _sys; push _bit::inp1; sub Qub::Had;
+        push _sys; push _bit::inp2; sub Qub::Had;
+        return;
 
