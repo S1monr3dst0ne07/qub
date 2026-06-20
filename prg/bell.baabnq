@@ -1,0 +1,32 @@
+
+
+" bell state demo
+use 'qub.baabnq';
+
+
+push 2;
+sub Qub::CreateSystem;
+pull _sys;
+
+put _bit::ctrl = 0;
+put _bit::trgt = 1;
+
+
+push _sys;
+push _bit::ctrl;
+sub Qub::Had;
+
+push _sys;
+push _bit::ctrl;
+push _bit::trgt;
+sub Qub::CNot;
+
+
+"push _sys;
+"sub Qub::Print;
+
+push _sys;
+sub Chunk::Print;
+
+
+
