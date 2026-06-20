@@ -24,7 +24,8 @@ for index, line in enumerate(lines):
 
     state = bin(index)[2:].zfill(n)
 
-    print(f"{prob:.4f} |{state}>")
+    if prob > 0.001:
+        print(f"{prob:.4f} |{state}>")
 
 print(f'\ntotal probl: {total}')
 
